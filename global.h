@@ -9,6 +9,18 @@
 #define MAX_LENGTH 100
 #define ACCOUNT_NUMBER_LENGTH 6
 #define USER "users.txt"
+#define SCHEDULEDB "schedule.txt"
+
+#define MAX_CLASSES 100
+
+struct Class
+{
+    int id;
+    int start_hour;
+    int end_hour;
+    char subject[50];
+    char account_number[20];
+};
 
 struct Note
 {

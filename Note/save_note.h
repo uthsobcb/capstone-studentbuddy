@@ -1,7 +1,7 @@
 #ifndef SAVE_NOTE_H
 #define SAVE_NOTE_H
 
-#include "./global.h"
+#include "../global.h"
 #include <stdio.h>
 
 void save_notes()

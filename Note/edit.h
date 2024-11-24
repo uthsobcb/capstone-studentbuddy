@@ -1,8 +1,8 @@
 #ifndef EDIT_H
 #define EDIT_H
 
-#include "./global.h"
 #include "save_note.h"
+#include "../global.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -19,25 +19,22 @@ void edit_note(char *account_number)
     int found = 0;
     for (int i = 0; i < note_count; i++)
     {
-        // Check if the note belongs to the authenticated user
         if (notes[i].id == id && strcmp(notes[i].account_number, account_number) == 0)
         {
             found = 1;
             printf("\nEditing Note ID: %d\n", id);
 
-            // Edit Course
             printf("Current Course: %s\n", notes[i].course);
             printf("Enter new Course (or press Enter to keep current): ");
             char course[100];
-            fgets(course, sizeof(course), stdin); // Use fgets for better input handling
-            if (strlen(course) > 1)               // Check if input is not just Enter
+            fgets(course, sizeof(course), stdin);
+            if (strlen(course) > 1)
             {
-                course[strcspn(course, "\n")] = '\0'; // Remove trailing newline
+                course[strcspn(course, "\n")] = '\0';
                 strncpy(notes[i].course, course, sizeof(notes[i].course) - 1);
                 notes[i].course[sizeof(notes[i].course) - 1] = '\0';
             }
 
-            // Edit Date
             printf("Current Date: %s\n", notes[i].date);
             printf("Enter new Date (YYYY-MM-DD) (or press Enter to keep current): ");
             char date[20];
@@ -49,7 +46,6 @@ void edit_note(char *account_number)
                 notes[i].date[sizeof(notes[i].date) - 1] = '\0';
             }
 
-            // Edit Note Data
             printf("Current Note Data: %s\n", notes[i].data);
             printf("Enter new Note Data (or press Enter to keep current): ");
             char data[1000];
@@ -61,7 +57,6 @@ void edit_note(char *account_number)
                 notes[i].data[sizeof(notes[i].data) - 1] = '\0';
             }
 
-            // Edit Tag
             printf("Current Tag: %s\n", notes[i].tag);
             printf("Enter new Tag (or press Enter to keep current): ");
             char tag[50];

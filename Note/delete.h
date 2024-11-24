@@ -1,7 +1,7 @@
 #ifndef DELETE_H
 #define DELETE_H
 
-#include "./global.h"
+#include "../global.h"
 #include <stdio.h>
 #include <string.h>
 

@@ -2,12 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
 #include "Note/add_note.h"
 #include "Note/load_note.h"
 #include "Note/list_note.h"
 #include "Note/edit.h"
 #include "Note/delete.h"
 #include "global.h"
+
+#include "Schedule/schedule_db.h"
+#include "Schedule/add_class.h"
+#include "Schedule/view_schedule.h"
+#include "Schedule/delete_class.h"
+#include "Schedule/detect_slots.h"
 
 typedef struct
 {
@@ -39,7 +46,6 @@ void load_users()
     fclose(file);
 }
 
-// Save users to file
 void save_users()
 {
     FILE *file = fopen(USER, "w");
@@ -56,7 +62,6 @@ void save_users()
     fclose(file);
 }
 
-// Find user by username
 int find_user(const char *username)
 {
     for (int i = 0; i < user_count; i++)
@@ -103,7 +108,10 @@ void register_user()
     scanf("%s", username);
     if (find_user(username) != -1)
     {
+        printf("\033[31m");
         printf("Username already exists.\n");
+        printf("\033[0m");
+
         return;
     }
 
@@ -118,7 +126,10 @@ void register_user()
     user_count++;
 
     save_users();
-    printf("Registration successful. Your account number is %s\nPlease remember this for further transactions with us.\n", account_number);
+
+    printf("\033[32m");
+    printf("Registration successful. Your account number is %s\n", account_number);
+    printf("\033[0m");
 }
 
 int login_user(char *username)
@@ -145,6 +156,87 @@ int login_user(char *username)
     return index;
 }
 
+void NoteManager(int logged_in_index)
+{
+    while (1)
+    {
+        int choice;
+        printf("\nNote Manager:\n");
+        printf("1. Add Note\n");
+        printf("2. List Notes\n");
+        printf("3. Edit Note\n");
+        printf("4. Delete Note\n");
+        printf("5. Exit\n");
+        printf("Choose an option: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 1:
+            add_note(users[logged_in_index].account_number);
+            break;
+        case 2:
+            list_notes(users[logged_in_index].account_number);
+            break;
+        case 3:
+            edit_note(users[logged_in_index].account_number);
+            break;
+        case 4:
+            delete_note(users[logged_in_index].account_number);
+            break;
+        case 5:
+            printf("Logging out...\n");
+            logged_in_index = -1;
+            return;
+        default:
+            printf("Invalid choice.\n");
+        }
+    }
+}
+
+void ScheduleManager(int logged_in_index)
+{
+    load_classes();
+
+    while (1)
+    {
+        int choice;
+        printf("\nSchedule Manager:\n");
+        printf("1. Add Class\n");
+        printf("2. View Schedule\n");
+        printf("3. Delete Class\n");
+        printf("4. Detect Empty Slots\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 1:
+            add_class(users[logged_in_index].account_number);
+            save_classes();
+            break;
+        case 2:
+            view_schedule(users[logged_in_index].account_number);
+            break;
+        case 3:
+            delete_class(users[logged_in_index].account_number);
+            save_classes();
+            break;
+        case 4:
+            detect_empty_slots(users[logged_in_index].account_number);
+            break;
+        case 5:
+            printf("\033[31m");
+            printf("Exiting Schedule Manager...\n");
+            printf("\033[0m");
+            return;
+        default:
+            printf("Invalid choice. Please try again.\n");
+        }
+    }
+}
+
 int main()
 {
     int choice;
@@ -154,9 +246,15 @@ int main()
     load_users();
     load_notes();
 
-    printf("============================\n");
+    time_t t;
+    time(&t);
+
+    printf("\033[36m");
+    printf("============================================\n");
     printf("Welcome to StudentBuddy\n");
-    printf("============================\n");
+    printf("Comprehensive Note and Schedule Manager\n");
+    printf("============================================\n");
+    printf("\033[0m");
     while (1)
     {
         if (logged_in_index == -1)
@@ -180,31 +278,30 @@ int main()
         }
         else
         {
+            printf("\033[35m");
             printf("\nWelcome %s [ID: %s]\n", users[logged_in_index].username, users[logged_in_index].account_number);
-            printf("1. Add Note\n");
-            printf("2. List Notes\n");
-            printf("3. Edit Note\n");
-            printf("4. Delete Note\n");
-            printf("5. Logout\n");
+            printf("It's %s\n", ctime(&t));
+            printf("======================================\n");
+            printf("\033[0m");
+            printf("1. Note Manager\n");
+            printf("2. Schedule Manager\n");
+            printf("3. Logout\n");
             printf("Choose an option: ");
             scanf("%d", &choice);
 
             switch (choice)
             {
             case 1:
-                add_note(users[logged_in_index].account_number);
+                NoteManager(logged_in_index);
                 break;
             case 2:
-                list_notes(users[logged_in_index].account_number);
+                ScheduleManager(logged_in_index);
                 break;
             case 3:
-                edit_note(users[logged_in_index].account_number);
-                break;
-            case 4:
-                delete_note(users[logged_in_index].account_number);
-                break;
-            case 5:
                 logged_in_index = -1;
+                printf("\033[31m");
+                printf("Logged out successfully.\n");
+                printf("\033[0m");
                 break;
             default:
                 printf("Invalid choice.\n");

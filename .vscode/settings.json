@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "list_note.h": "c",
+        "edit.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}
